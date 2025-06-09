@@ -1,27 +1,25 @@
-- name: Install remi release RPM
-  ansible.builtin.dnf:
-      name: https://rpms.remirepo.net/enterprise/remi-release-8.5.rpm
-      state: present
-      disable_gpg_check: true
-
-- name: Reset the Redis DNF module
-  ansible.builtin.command: dnf module reset redis -y
-
-- name: Enable the Redis Remi module
+- name: install remi release
+  ansible.builtin.dnf: # check pacakge will work not
+    name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+    state: present
+    disable_gpg_check: true
+  
+- name: enable redis
   ansible.builtin.command: dnf module enable redis:remi-6.2 -y
 
-- name: Install Redis
+- name: install redis
   ansible.builtin.dnf:
-      name: redis
-      state: present
-- name: Allow remote connections in Redis config
-  ansible.builtin.replace:
-      path: /etc/redis.conf
-      regexp: '^bind\s+127\.0\.0\.1'
-      replace: 'bind 0.0.0.0'
+    name: redis
+    state: present
 
-- name: Restart Redis service
+- name: allow remote connections
+  ansible.builtin.replace:
+    path: /etc/redis/redis.conf
+    regexp: '127.0.0.1'
+    replace: '0.0.0.0'
+
+- name: start and enable redis
   ansible.builtin.service:
-      name: redis
-      state: restarted
-      enabled: yes
+    name: redis
+    state: restarted
+    enabled: yes
